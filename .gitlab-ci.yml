@@ -1,0 +1,22 @@
+image: "docker:latest"
+
+build docker image:
+
+  variables:
+    LATEST_TAG: $CI_REGISTRY_IMAGE:latest
+
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    # This is to warm the cache, so no need to stop the build if it fails
+    # The DEV_IMAGE is the closer to the one we are currently building so
+    # we try that one first. Then the LATEST one if it exist, otherwise we
+    # just return true
+    - docker pull $LATEST_TAG || true
+
+  script:
+    - docker build --pull -f Dockerfile --cache-from $LATEST_TAG --tag $LATEST_TAG .
+    - docker push $LATEST_TAG
+  services:
+    - docker:dind
+  tags:
+    - docker
