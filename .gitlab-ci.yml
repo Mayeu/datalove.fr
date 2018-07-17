@@ -16,7 +16,6 @@ build docker image:
   script:
     - docker build --pull -f Dockerfile --cache-from $LATEST_TAG --tag $LATEST_TAG .
     - docker push $LATEST_TAG
-  services:
-    - docker:dind
+
   tags:
     - docker
