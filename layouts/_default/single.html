@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+  {{ partial "head.html" }}
+  <body>
+  <!-- Don't forget this ., it is the global context to be passed -->
+    {{ partial "menu.html" . }}
+    <div>
+      {{ partial "sidebar.html" }}
+      <div id="content">
+        {{ .Content }}
+      </div>
+      {{ partial "footer.html" }}
+    </div>
+  </body>
+</html>
+
