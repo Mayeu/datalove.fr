@@ -1,7 +1,20 @@
-image: "docker:latest"
+
+stages:
+  - build
+  - docker
+
+build blog:
+  stage: build
+  image: "registry.gitlab.com/pages/hugo:latest"
+  script:
+    - hugo
+  artifacts:
+    paths:
+      - public/
 
 build docker image:
-
+  stage: docker
+  image: "docker:latest"
   variables:
     LATEST_TAG: $CI_REGISTRY_IMAGE:latest
 
@@ -18,5 +31,7 @@ build docker image:
     - docker push $LATEST_TAG
   services:
     - docker:dind
+  only:
+    - master
   tags:
     - docker
