@@ -9,3 +9,6 @@ s: serve
 serve: server
 server:
 	hugo serve
+
+docker: build
+	docker build .
