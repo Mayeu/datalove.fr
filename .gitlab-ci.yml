@@ -10,12 +10,16 @@ build blog:
     - hugo
   artifacts:
     paths:
+      - Dockerfile
+      - .dockerignore
       - public/
 
 build docker image:
   stage: docker
   image: "docker:latest"
   variables:
+    # We don't need to get the code, everything is in the artifacts
+    GIT_STRATEGY: none
     LATEST_TAG: $CI_REGISTRY_IMAGE:latest
 
   before_script:
@@ -25,13 +29,17 @@ build docker image:
     # we try that one first. Then the LATEST one if it exist, otherwise we
     # just return true
     - docker pull $LATEST_TAG || true
+    - if test $CI_COMMIT_REF_NAME == "master"; then
+        export VERSION="${CI_REGISTRY_IMAGE}:`cat version`";
+      else
+        export VERSION="${CI_REGISTRY_IMAGE}:${CI_COMMIT_REF_NAME}-`cat version`";
+      fi
 
   script:
-    - docker build --pull -f Dockerfile --cache-from $LATEST_TAG --tag $LATEST_TAG .
+    - docker build --pull -f Dockerfile --cache-from $LATEST_TAG --tag $LATEST_TAG --tag $VERSION .
     - docker push $LATEST_TAG
+    - docker push $VERSION
   services:
     - docker:dind
-  only:
-    - master
   tags:
     - docker
