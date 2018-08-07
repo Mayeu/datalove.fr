@@ -10,6 +10,7 @@ build blog:
     - hugo
   artifacts:
     paths:
+      - version
       - Dockerfile
       - .dockerignore
       - public/
